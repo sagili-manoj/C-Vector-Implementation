@@ -251,7 +251,6 @@ public:
         return *this;
     }
 
-    // Member MuñozMember functions
     template <typename... Args>
     void emplace_back(Args&&... args) {
         if (size_ == capacity_) {
