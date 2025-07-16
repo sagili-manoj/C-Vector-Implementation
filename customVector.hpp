@@ -8,7 +8,6 @@
 #include <initializer_list>
 #include <iostream>
 
-// Compliant custom allocator
 template <typename T>
 class SimpleAllocator {
 public:
@@ -86,10 +85,7 @@ private:
     }
 
 public:
-    // Forward declaration of ConstIterator
     class ConstIterator;
-
-    // Iterator class
     class Iterator {
     public:
         using iterator_category = std::random_access_iterator_tag;
@@ -118,7 +114,6 @@ public:
         pointer ptr_;
     };
 
-    // Const Iterator
     class ConstIterator {
     public:
         using iterator_category = std::random_access_iterator_tag;
@@ -148,7 +143,6 @@ public:
         const T* ptr_;
     };
 
-    // Constructors
     Vector() : data_(nullptr), size_(0), capacity_(0) {}
     
     explicit Vector(size_t n) : data_(nullptr), size_(n), capacity_(n) {
@@ -188,7 +182,6 @@ public:
 
     Vector(std::initializer_list<T> il) : Vector(il.begin(), il.end()) {}
 
-    // Copy constructor
     Vector(const Vector& other) : data_(nullptr), size_(other.size_), capacity_(other.size_),
         alloc_(AllocTraits::select_on_container_copy_construction(other.alloc_)) {
         if (size_ > 0) {
@@ -204,7 +197,6 @@ public:
         }
     }
 
-    // Move constructor
     Vector(Vector&& other) noexcept 
         : data_(other.data_), size_(other.size_), capacity_(other.capacity_), alloc_(std::move(other.alloc_)) {
         other.data_ = nullptr;
@@ -212,7 +204,6 @@ public:
         other.capacity_ = 0;
     }
 
-    // Destructor
     ~Vector() {
         for (size_t i = 0; i < size_; ++i) {
             AllocTraits::destroy(alloc_, data_ + i);
@@ -220,7 +211,6 @@ public:
         AllocTraits::deallocate(alloc_, data_, capacity_);
     }
 
-    // Assignment operators
     Vector& operator=(const Vector& other) {
         Vector tmp(other);
         std::swap(data_, tmp.data_);
@@ -355,7 +345,6 @@ public:
         size_ = 0;
     }
 
-    // Iterator functions
     Iterator begin() { return Iterator(data_); }
     Iterator end() { return Iterator(data_ + size_); }
     ConstIterator begin() const { return ConstIterator(data_); }
@@ -363,14 +352,11 @@ public:
     ConstIterator cbegin() const { return ConstIterator(data_); }
     ConstIterator cend() const { return ConstIterator(data_); }
 
-    // Comparison operators
     friend bool operator==(const Vector& lhs, const Vector& rhs) {
         return lhs.size_ == rhs.size_ && std::equal(lhs.begin(), lhs.end(), rhs.begin());
     }
     friend bool operator!=(const Vector& lhs, const Vector& rhs) { return !(lhs == rhs); }
 };
-
-// Define Iterator's comparison operators with ConstIterator
 template <typename T, typename Allocator>
 bool Vector<T, Allocator>::Iterator::operator==(const typename Vector<T, Allocator>::ConstIterator& other) const {
     return ptr_ == other.ptr_;
@@ -381,7 +367,6 @@ bool Vector<T, Allocator>::Iterator::operator!=(const typename Vector<T, Allocat
     return ptr_ != other.ptr_;
 }
 
-// Non-member swap
 template <typename T, typename Allocator>
 void swap(Vector<T, Allocator>& lhs, Vector<T, Allocator>& rhs) noexcept {
     std::swap(lhs.data_, rhs.data_);
